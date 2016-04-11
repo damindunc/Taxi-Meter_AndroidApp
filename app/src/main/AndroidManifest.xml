@@ -31,12 +31,6 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
-            android:label="Taxi Meter"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".Splash"
             android:label="Taxi Meter">
             <intent-filter>

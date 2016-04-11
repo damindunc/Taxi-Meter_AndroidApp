@@ -257,7 +257,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * */
     private void togglePeriodicLocationUpdates()
     {
-
         if (!mRequestingLocationUpdates)
         {
             // Changing the button text

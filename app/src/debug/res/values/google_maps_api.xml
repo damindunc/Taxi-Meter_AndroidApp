@@ -16,6 +16,11 @@
     string in this file.
     -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        AIzaSyAms2yG2J6ZwCkS4PBTo4clOo1KBMIfDO0
+        AIzaSyCm0dBgBk2r0oT-NA7te4ZApIvW-zyEgsM
     </string>
+
+    <!--New API from google after generating SHA1 from release key: AIzaSyCm0dBgBk2r0oT-NA7te4ZApIvW-zyEgsM -->
+
+    <!--Old API from google before generating SHA1 from release key: AIzaSyAms2yG2J6ZwCkS4PBTo4clOo1KBMIfDO0 -->
+
 </resources>

@@ -3,10 +3,10 @@
     package="com.iotaconcepts.distancecalc">
 
     <permission
-        android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE"
+        android:name="com.iotaconcepts.distancecalc.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="info.androidhive.googlemapsv2.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.iotaconcepts.distancecalc.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -50,7 +50,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyAqRf36wKknGtlhXpEXs7Cht_aKYtS1y58" />
     </application>
 
 </manifest>

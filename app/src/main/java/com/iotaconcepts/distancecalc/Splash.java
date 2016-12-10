@@ -9,11 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 public class Splash extends Activity{
 
     Button getStarted;
     TextView description;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,8 +22,7 @@ public class Splash extends Activity{
         getStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Splash.this, MapsActivity.class);
-                startActivity(i);
+                startActivity(new Intent(Splash.this, MainActivity.class));
             }
         });
     }

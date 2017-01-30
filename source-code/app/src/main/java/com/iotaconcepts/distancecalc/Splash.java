@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -28,6 +29,8 @@ public class Splash extends Activity{
     ProgressDialog rd;
     GPSTracker gps;
 
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,9 +49,7 @@ public class Splash extends Activity{
                 rd.setCancelable(false);
                 rd.show();
 
-                testGPSRun();
-
-                runTimer();
+                testRunWrapper();
             }
         });
     }
@@ -74,9 +75,6 @@ public class Splash extends Activity{
         else if (!checkLocationAccess()) {
             messagePopup("Required", "Please turn on your LOCATION in order to use the app.");
         }
-        else {
-            Toast.makeText(this, "yay!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     void messagePopup(String heading, String message){
@@ -90,6 +88,60 @@ public class Splash extends Activity{
             }
         });
         alertDialog.show();
+    }
+
+    void testRunWrapper() {
+        int hasPermission = 0;
+
+        // Go for RUNTIME PERMISSION CHECK only if the device is Marshmallow or above
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            // Check LOCATION PERMISSION at runtime
+            hasPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+            if (hasPermission != PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+                Toast.makeText(Splash.this, "Location permission was not granted!", Toast.LENGTH_SHORT).show();
+
+                // return null if permission not granted
+                return;
+            }
+
+            // permission granted :) lets get location and call API.
+            testGPSRun();
+        }
+        else {
+            // For device lower than Marshmallow
+            // Call locationAndCall function straight away, no need to check!
+            testGPSRun();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    testGPSRun();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(Splash.this, "You denied location permission!", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    void testGPSRun(){
+        gps = new GPSTracker(Splash.this);
+        if(gps.canGetLocation()) {
+            Double L1 = gps.getLatitude();
+            Double L2 = gps.getLongitude();
+        }
+
+        runTimer();
     }
 
     void runTimer() {
@@ -109,6 +161,7 @@ public class Splash extends Activity{
         };
         timer.start();
     }
+
 
     boolean checkInternetConnection() {
         boolean mobileDataEnabled = false;
@@ -132,7 +185,6 @@ public class Splash extends Activity{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             try {
                 locationMode = Settings.Secure.getInt(getApplicationContext().getContentResolver(), Settings.Secure.LOCATION_MODE);
-
             } catch (Settings.SettingNotFoundException e) {
                 e.printStackTrace();
             }
@@ -143,14 +195,4 @@ public class Splash extends Activity{
         }
     }
 
-    void testGPSRun(){
-        gps = new GPSTracker(Splash.this);
-        if(gps.canGetLocation()) {
-            Double L1 = gps.getLatitude();
-            Double L2 = gps.getLongitude();
-        }
-        else {
-            //gps.showSettingsAlert();
-        }
-    }
 }

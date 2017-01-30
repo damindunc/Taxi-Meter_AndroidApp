@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int count, a, fare_value;
     float distanceTravelled;
 
-    ProgressDialog rd;
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -118,16 +118,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(MapsActivity.this, "Map Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         try {
             initilizeMap();
-            Toast.makeText(MapsActivity.this, "two", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e) {
             e.printStackTrace();
-            //Toast.makeText(MapsActivity.this, "Map Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
         fare_checkbox.setOnClickListener(new View.OnClickListener() {
@@ -156,14 +153,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v)
             {
-                gps = new GPSTracker(MapsActivity.this);
-                if(gps.canGetLocation()) {
-                    lat_1 = gps.getLatitude();
-                    lon_1 = gps.getLongitude();
-                }
-                else {
-                    //       gps.showSettingsAlert();
-                }
+
+                GPSFunctionWrapper();
 
                 if (a == 0) {
                     // Snackbar
@@ -234,14 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
 
-            gps = new GPSTracker(MapsActivity.this);
-            if(gps.canGetLocation()) {
-                L1 = gps.getLatitude();
-                L2 = gps.getLongitude();
-            }
-            else {
-                //gps.showSettingsAlert();
-            }
+            GPSFunctionWrapper();
 
             LatLng coordinate = new LatLng(L1, L2);
             CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 14);
@@ -253,14 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         else {
-            gps = new GPSTracker(MapsActivity.this);
-            if(gps.canGetLocation()) {
-                L1 = gps.getLatitude();
-                L2 = gps.getLongitude();
-            }
-            else {
-                //gps.showSettingsAlert();
-            }
+            GPSFunctionWrapper();
 
             LatLng coordinate = new LatLng(L1, L2);
             CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 14);
@@ -270,6 +247,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (mMap == null) {
                 Toast.makeText(getApplicationContext(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    void GPSFunctionWrapper() {
+        int hasPermission = 0;
+
+        // Go for RUNTIME PERMISSION CHECK only if the device is Marshmallow or above
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+        {
+            // Check LOCATION PERMISSION at runtime
+            hasPermission = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+            if (hasPermission != PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+                Toast.makeText(MapsActivity.this, "Location permission was not granted!", Toast.LENGTH_SHORT).show();
+
+                // return null if permission not granted
+                return;
+            }
+
+            // permission granted :) lets get location and call API.
+            GPSFunction();
+        }
+        else {
+            // For device lower than Marshmallow
+            // Call locationAndCall function straight away, no need to check!
+            GPSFunction();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    GPSFunction();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MapsActivity.this, "You denied location permission!", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    void GPSFunction() {
+        gps = new GPSTracker(MapsActivity.this);
+        if(gps.canGetLocation()) {
+            lat_1 = gps.getLatitude();
+            lon_1 = gps.getLongitude();
+        }
+        else {
+            //       gps.showSettingsAlert();
         }
     }
 

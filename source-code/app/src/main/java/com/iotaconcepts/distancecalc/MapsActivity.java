@@ -113,15 +113,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             createLocationRequest();
         }
 
-        /*
-        rd = new ProgressDialog(MapsActivity.this);
-        rd.setTitle("Please Wait!");
-        rd.setMessage("Fetching your location...");
-        rd.setCancelable(false);
-        rd.show();
-        rd.cancel();
-        */
-
         try {
             initilizeMap();
         }
@@ -130,7 +121,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //Toast.makeText(MapsActivity.this, "Map Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
 
-        //runTimer();
+        try {
+            initilizeMap();
+            Toast.makeText(MapsActivity.this, "two", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            //Toast.makeText(MapsActivity.this, "Map Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+        }
 
         fare_checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,6 +234,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
             mMap.setMyLocationEnabled(true);
 
+            gps = new GPSTracker(MapsActivity.this);
+            if(gps.canGetLocation()) {
+                L1 = gps.getLatitude();
+                L2 = gps.getLongitude();
+            }
+            else {
+                //gps.showSettingsAlert();
+            }
+
+            LatLng coordinate = new LatLng(L1, L2);
+            CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 14);
+            mMap.animateCamera(yourLocation);
+
+            // check if map is created successfully or not
+            if (mMap == null) {
+                Toast.makeText(getApplicationContext(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
             gps = new GPSTracker(MapsActivity.this);
             if(gps.canGetLocation()) {
                 L1 = gps.getLatitude();

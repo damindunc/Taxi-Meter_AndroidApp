@@ -22,6 +22,7 @@ public class Splash extends Activity{
         getStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 startActivity(new Intent(Splash.this, MapsActivity.class));
             }
         });
@@ -36,5 +37,24 @@ public class Splash extends Activity{
         Typeface Mont = Typeface.createFromAsset(getApplication().getAssets(), "Montserrat-Regular.otf");
         getStarted.setTypeface(Mont);
         description.setTypeface(Mont);
+    }
+
+    void runTimer() {
+
+        Thread timer = new Thread() {
+            public void run() {
+                try {
+                    sleep(3000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                finally {
+
+                }
+            }
+        };
+
+        timer.start();
     }
 }

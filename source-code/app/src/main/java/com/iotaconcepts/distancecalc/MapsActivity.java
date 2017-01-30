@@ -1,6 +1,7 @@
 package com.iotaconcepts.distancecalc;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,6 +88,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int count, a, fare_value;
     float distanceTravelled;
 
+    ProgressDialog rd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -110,12 +113,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             createLocationRequest();
         }
 
+        /*
+        rd = new ProgressDialog(MapsActivity.this);
+        rd.setTitle("Please Wait!");
+        rd.setMessage("Fetching your location...");
+        rd.setCancelable(false);
+        rd.show();
+        rd.cancel();
+        */
+
         try {
             initilizeMap();
         }
         catch (Exception e) {
             e.printStackTrace();
+            //Toast.makeText(MapsActivity.this, "Map Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
+
+        //runTimer();
 
         fare_checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,7 +197,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     } // On create
 
-
     private void init(){
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         startWalking = (Button)findViewById(R.id.bt_startWalking);
@@ -223,24 +237,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
 
             gps = new GPSTracker(MapsActivity.this);
-            if(gps.canGetLocation())
-            {
+            if(gps.canGetLocation()) {
                 L1 = gps.getLatitude();
                 L2 = gps.getLongitude();
             }
-            else
-            {
-                //       gps.showSettingsAlert();
+            else {
+                //gps.showSettingsAlert();
             }
 
             LatLng coordinate = new LatLng(L1, L2);
             CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 14);
             mMap.animateCamera(yourLocation);
 
-
             // check if map is created successfully or not
-            if (mMap == null)
-            {
+            if (mMap == null) {
                 Toast.makeText(getApplicationContext(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
             }
         }
@@ -395,6 +405,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location)
     {
         // Assign the new location
+        //this.mLastLocation = location;
         mLastLocation = location;
 
         Double lat_2, lon_2;

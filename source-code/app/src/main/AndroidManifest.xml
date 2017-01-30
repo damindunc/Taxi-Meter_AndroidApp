@@ -51,15 +51,6 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:label="Taxi Meter">
-            <intent-filter>
-                <action android:name="android.intent.action.MAINACTIVITY" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".MapsActivity"
             android:label="Taxi Meter">
             <intent-filter>

@@ -88,6 +88,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int count, a, fare_value;
     float distanceTravelled;
 
+    boolean startMeasuring;
+
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     @Override
@@ -122,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
             initilizeMap();
+            startMeasuring = true;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -209,6 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         distanceTravelled = 0;
         count = 0;
         a = 0;
+        startMeasuring = false;
     }
 
     /**
@@ -453,31 +457,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location)
     {
-        // Assign the new location
-        //this.mLastLocation = location;
-        mLastLocation = location;
 
-        Double lat_2, lon_2;
-        lat_2 = location.getLatitude();
-        lon_2 = location.getLongitude();
+        if (startMeasuring) {
+            // Assign the new location
+            //this.mLastLocation = location;
+            mLastLocation = location;
 
-        //Toast.makeText(getApplicationContext(), "Location changed!" + lat_2 +"   "+lon_2, Toast.LENGTH_SHORT).show();
+            Double lat_2, lon_2;
+            lat_2 = location.getLatitude();
+            lon_2 = location.getLongitude();
 
-        // Plot new Polyline on map
-        line = new PolylineOptions().add(new LatLng(lat_1, lon_1), new LatLng(lat_2, lon_2)).width(13).color(getApplicationContext().getResources().getColor(R.color.floroGreen));
-        mMap.addPolyline(line);
+            //Toast.makeText(getApplicationContext(), "Location changed!" + lat_2 +"   "+lon_2, Toast.LENGTH_SHORT).show();
 
-        // Calculating distance between new location and previous location
-        float[] results = new float[1];
-        Location.distanceBetween(lat_1, lon_1, lat_2, lon_2, results);
-        distanceTravelled = distanceTravelled + (results[0] / 1000);
+            // Plot new Polyline on map
+            line = new PolylineOptions().add(new LatLng(lat_1, lon_1), new LatLng(lat_2, lon_2)).width(13).color(getApplicationContext().getResources().getColor(R.color.floroGreen));
+            mMap.addPolyline(line);
+
+            // Calculating distance between new location and previous location
+            float[] results = new float[1];
+            Location.distanceBetween(lat_1, lon_1, lat_2, lon_2, results);
+            distanceTravelled = distanceTravelled + (results[0] / 1000);
 
 
-        lat_1 = lat_2;
-        lon_1 = lon_2;
+            lat_1 = lat_2;
+            lon_1 = lon_2;
 
-        // Displaying the new location on UI
-        displayLocation();
+            // Displaying the new location on UI
+            displayLocation();
+        }
+        else {
+
+        }
     }
 
     @Override
